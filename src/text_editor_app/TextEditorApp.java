@@ -22,13 +22,18 @@ import java.awt.EventQueue;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.Formatter;
+
+import javax.swing.JLabel;
 
 public class TextEditorApp {
 
 	private JFrame frmTextEditor;
 	private JTextArea textArea;
+	private String fileName;
 	Utilities utilities = new Utilities();
 
 	/**
@@ -71,7 +76,7 @@ public class TextEditorApp {
 				
 			}
 		});
-		frmTextEditor.setTitle("Text Editor");
+		frmTextEditor.setTitle("Untitled - Text Editor");
 		frmTextEditor.setResizable(false);
 		frmTextEditor.setBounds(100, 100, 520, 682);
 		frmTextEditor.setLocationRelativeTo(null);
@@ -91,13 +96,18 @@ public class TextEditorApp {
 		menuItemNew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				if(!textArea.getText().equals("")) {
+				if(!frmTextEditor.getTitle().equals("Untitled - Text Editor")) {
 					int clickedOption = JOptionPane.showConfirmDialog(null, "Any changes will be discarded.\nCreate new document?", "Confirm New", JOptionPane.YES_NO_OPTION);
-				    if(clickedOption == JOptionPane.YES_OPTION){
+				   
+					if(clickedOption == JOptionPane.YES_OPTION) {
 				    	textArea.setText("");
-				    }
-				}
+				    	utilities.setMainWindowTitle(frmTextEditor, "Untitled - Text Editor");
+					}
 
+				} else {
+					utilities.setMainWindowTitle(frmTextEditor, "Untitled - Text Editor");
+				}
+				
 			}
 		});
 		menuItemNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
@@ -114,7 +124,9 @@ public class TextEditorApp {
 	            int selectedOption = fileChooser.showOpenDialog(null); 
 	  
 	            if (selectedOption == JFileChooser.APPROVE_OPTION) { 
-	                File file = new File(fileChooser.getSelectedFile().getAbsolutePath()); 
+	                File file = new File(fileChooser.getSelectedFile().getAbsolutePath());
+	                fileName = fileChooser.getSelectedFile().getAbsolutePath();
+	                utilities.setMainWindowTitle(frmTextEditor, file, file.getName());
 	  
 	                try { 
 	                    String stringReader1 = "", stringReader2 = ""; 
@@ -147,31 +159,102 @@ public class TextEditorApp {
 		menuItemSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-	            JFileChooser fileChooser = new JFileChooser("C:/Users/arias/Desktop"); 
-	  
-	            int selectedOption = fileChooser.showSaveDialog(null); 
-	  
-	            if (selectedOption == JFileChooser.APPROVE_OPTION) { 
-	                File file = new File(fileChooser.getSelectedFile().getAbsolutePath()); 
-	  
-	                try { 
-	                    FileWriter fileWriter = new FileWriter(file, false); 
-	                    BufferedWriter bufferedWriter = new BufferedWriter(fileWriter); 
-	  
-	                    bufferedWriter.write(textArea.getText()); 
-	  
-	                    bufferedWriter.flush(); 
-	                    bufferedWriter.close(); 
-	                    
-	                } catch (Exception exception) { 
-	                    JOptionPane.showMessageDialog(frmTextEditor, exception.getMessage()); 
-	                } 
-	            } 
+				if(frmTextEditor.getTitle().equals("Untitled - Text Editor") && !textArea.getText().equals("")) {
+		            JFileChooser fileChooser = new JFileChooser("C:/Users/arias/Desktop"); 
+		      	  
+		            int selectedOption = fileChooser.showSaveDialog(null); 
+		  
+		            if (selectedOption == JFileChooser.APPROVE_OPTION) { 
+		                File file = new File(fileChooser.getSelectedFile().getAbsolutePath()); 
+		                fileName = fileChooser.getSelectedFile().getAbsolutePath();
+		                utilities.setMainWindowTitle(frmTextEditor, file, file.getName());
+		                
+		                try { 
+		                    FileWriter fileWriter = new FileWriter(file, false); 
+		                    BufferedWriter bufferedWriter = new BufferedWriter(fileWriter); 
+		  
+		                    bufferedWriter.write(textArea.getText()); 
+		  
+		                    bufferedWriter.flush(); 
+		                    bufferedWriter.close(); 
+		                    
+		                } catch (Exception exception) { 
+		                    JOptionPane.showMessageDialog(frmTextEditor, exception.getMessage()); 
+		                } 
+		            } 
+		            
+				} else {
+					try {
+				          Formatter formatter = new Formatter(new File(fileName));
+				          formatter.format("%s", textArea.getText());
+				          formatter.close();
+
+					} catch (FileNotFoundException exception) {
+						exception.printStackTrace();
+					}
+					
+				}
 				
 			}
 		});
 		menuItemSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
 		menuFile.add(menuItemSave);
+		
+		//Implement menuItem "Save As...".
+		
+		JMenuItem mntmNewMenuItem = new JMenuItem("Save As...");
+		mntmNewMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				JFileChooser fileChooser = new JFileChooser("C:/Users/arias/Desktop"); 
+				  
+	            int selectedOption = fileChooser.showSaveDialog(null); 
+	            
+	            if (selectedOption == JFileChooser.APPROVE_OPTION) { 
+	                File file = new File(fileChooser.getSelectedFile().getAbsolutePath()); 
+	                fileName = fileChooser.getSelectedFile().getAbsolutePath();
+	                
+	                if(file.exists()) { 
+	    				int clickedOption = JOptionPane.showConfirmDialog(null, "Are you sure you want to rewrite this file?", "Confirm Save As...", JOptionPane.YES_NO_OPTION);
+	    			    
+	    				if(clickedOption == JOptionPane.YES_OPTION) {
+	    	                try { 
+	    	                	utilities.setMainWindowTitle(frmTextEditor, file, file.getName());
+	    	                    FileWriter fileWriter = new FileWriter(file, false); 
+	    	                    BufferedWriter bufferedWriter = new BufferedWriter(fileWriter); 
+	    	  
+	    	                    bufferedWriter.write(textArea.getText()); 
+	    	  
+	    	                    bufferedWriter.flush(); 
+	    	                    bufferedWriter.close(); 
+	    	                    
+	    	                } catch (Exception exception) { 
+	    	                    JOptionPane.showMessageDialog(frmTextEditor, exception.getMessage()); 
+	    	                } 
+	    			    }
+	    			    
+	                } else {
+    	                try { 
+    	                	utilities.setMainWindowTitle(frmTextEditor, file, file.getName());
+    	                    FileWriter fileWriter = new FileWriter(file, false); 
+    	                    BufferedWriter bufferedWriter = new BufferedWriter(fileWriter); 
+    	  
+    	                    bufferedWriter.write(textArea.getText()); 
+    	  
+    	                    bufferedWriter.flush(); 
+    	                    bufferedWriter.close(); 
+    	                    
+    	                } catch (Exception exception) { 
+    	                    JOptionPane.showMessageDialog(frmTextEditor, exception.getMessage()); 
+    	                } 
+    	                
+	                }
+	                
+	            } 
+				
+			}
+		});
+		menuFile.add(mntmNewMenuItem);
 		
 		menuFile.add(new JSeparator());
 		
@@ -234,10 +317,6 @@ public class TextEditorApp {
 		JMenuItem menuItemFind = new JMenuItem("Find...");
 		menuItemFind.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK));
 		menuEdit.add(menuItemFind);
-		
-		JMenuItem menuItemReplace = new JMenuItem("Replace...");
-		menuItemReplace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_MASK));
-		menuEdit.add(menuItemReplace);
 		
 		menuEdit.add(new JSeparator());
 		
