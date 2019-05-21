@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.undo.UndoManager;
 import javax.swing.JScrollBar;
@@ -17,11 +18,14 @@ import java.awt.event.ActionEvent;
 import javax.swing.KeyStroke;
 import java.awt.event.KeyEvent;
 import java.awt.event.InputEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class TextEditorApp {
 
 	private JFrame frmTextEditor;
 	private JTextArea textArea;
+	Utilities utilities = new Utilities();
 
 	/**
 	 * Launch the application.
@@ -51,11 +55,22 @@ public class TextEditorApp {
 	 */
 	private void initialize() {
 		frmTextEditor = new JFrame();
+		
+		//Implement windowClosing event.
+		
+		frmTextEditor.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				
+				utilities.showConfirmClosingWindow(frmTextEditor);
+				
+			}
+		});
 		frmTextEditor.setTitle("Text Editor");
 		frmTextEditor.setResizable(false);
 		frmTextEditor.setBounds(100, 100, 520, 682);
 		frmTextEditor.setLocationRelativeTo(null);
-		frmTextEditor.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmTextEditor.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frmTextEditor.getContentPane().setLayout(null);
 		
 		JMenuBar menuBar = new JMenuBar();
@@ -82,7 +97,16 @@ public class TextEditorApp {
 		
 		menuFile.add(new JSeparator());
 		
+		//Implement menuItem "Exit".
+		
 		JMenuItem menuItemExit = new JMenuItem("Exit");
+		menuItemExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				utilities.showConfirmClosingWindow(frmTextEditor);
+				
+			}
+		});
 		menuFile.add(menuItemExit);
 		
 		JMenu menuEdit = new JMenu("Edit");
