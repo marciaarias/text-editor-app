@@ -1,25 +1,29 @@
 package text_editor_app;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
-import javax.swing.undo.UndoManager;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFileChooser;
+import javax.swing.KeyStroke;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import javax.swing.KeyStroke;
 import java.awt.event.KeyEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.EventQueue;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 
 public class TextEditorApp {
 
@@ -53,6 +57,7 @@ public class TextEditorApp {
 	/**
 	 * Initialize the contents of the frame.
 	 */
+	@SuppressWarnings("deprecation")
 	private void initialize() {
 		frmTextEditor = new JFrame();
 		
@@ -62,7 +67,7 @@ public class TextEditorApp {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				
-				utilities.showConfirmClosingWindow(frmTextEditor);
+				utilities.showConfirmClosingWindow(frmTextEditor, textArea);
 				
 			}
 		});
@@ -80,20 +85,93 @@ public class TextEditorApp {
 		JMenu menuFile = new JMenu("File");
 		menuBar.add(menuFile);
 		
+		//Implement menuItem "New".
+		
 		JMenuItem menuItemNew = new JMenuItem("New");
+		menuItemNew.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if(!textArea.getText().equals("")) {
+					int clickedOption = JOptionPane.showConfirmDialog(null, "Any changes will be discarded.\nCreate new document?", "Confirm New", JOptionPane.YES_NO_OPTION);
+				    if(clickedOption == JOptionPane.YES_OPTION){
+				    	textArea.setText("");
+				    }
+				}
+
+			}
+		});
 		menuItemNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
 		menuFile.add(menuItemNew);
 		
+		//Implement menuItem "Open".
+		
 		JMenuItem menuItemOpen = new JMenuItem("Open...");
+		menuItemOpen.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+	            JFileChooser fileChooser = new JFileChooser("C:/Users/arias/Desktop"); 
+	  
+	            int selectedOption = fileChooser.showOpenDialog(null); 
+	  
+	            if (selectedOption == JFileChooser.APPROVE_OPTION) { 
+	                File file = new File(fileChooser.getSelectedFile().getAbsolutePath()); 
+	  
+	                try { 
+	                    String stringReader1 = "", stringReader2 = ""; 
+	                    FileReader fileReader = new FileReader(file); 
+	                    BufferedReader bufferedReader = new BufferedReader(fileReader); 
+	  
+	                    stringReader2 = bufferedReader.readLine(); 
+	  
+	                    while ((stringReader1 = bufferedReader.readLine()) != null) { 
+	                    	stringReader2 += "\n" + stringReader1; 
+	                    } 
+	  
+	                    textArea.setText(stringReader2); 
+	                    
+	                    bufferedReader.close(); 
+	                    
+	                } catch (Exception exception) { 
+	                    JOptionPane.showMessageDialog(frmTextEditor, exception.getMessage()); 
+	                } 
+	            } 
+				
+			}
+		});
 		menuItemOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
 		menuFile.add(menuItemOpen);
 		
+		//Implement menuItem "Save".
+		
 		JMenuItem menuItemSave = new JMenuItem("Save");
+		menuItemSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+	            JFileChooser fileChooser = new JFileChooser("C:/Users/arias/Desktop"); 
+	  
+	            int selectedOption = fileChooser.showSaveDialog(null); 
+	  
+	            if (selectedOption == JFileChooser.APPROVE_OPTION) { 
+	                File file = new File(fileChooser.getSelectedFile().getAbsolutePath()); 
+	  
+	                try { 
+	                    FileWriter fileWriter = new FileWriter(file, false); 
+	                    BufferedWriter bufferedWriter = new BufferedWriter(fileWriter); 
+	  
+	                    bufferedWriter.write(textArea.getText()); 
+	  
+	                    bufferedWriter.flush(); 
+	                    bufferedWriter.close(); 
+	                    
+	                } catch (Exception exception) { 
+	                    JOptionPane.showMessageDialog(frmTextEditor, exception.getMessage()); 
+	                } 
+	            } 
+				
+			}
+		});
 		menuItemSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
 		menuFile.add(menuItemSave);
-		
-		JMenuItem menuItemSaveAs = new JMenuItem("Save As...");
-		menuFile.add(menuItemSaveAs);
 		
 		menuFile.add(new JSeparator());
 		
@@ -103,7 +181,7 @@ public class TextEditorApp {
 		menuItemExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				utilities.showConfirmClosingWindow(frmTextEditor);
+				utilities.showConfirmClosingWindow(frmTextEditor, textArea);
 				
 			}
 		});
