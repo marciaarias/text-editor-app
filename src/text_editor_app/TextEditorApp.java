@@ -14,6 +14,9 @@ import javax.swing.JSeparator;
 import javax.swing.JCheckBoxMenuItem;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.KeyStroke;
+import java.awt.event.KeyEvent;
+import java.awt.event.InputEvent;
 
 public class TextEditorApp {
 
@@ -63,12 +66,15 @@ public class TextEditorApp {
 		menuBar.add(menuFile);
 		
 		JMenuItem menuItemNew = new JMenuItem("New");
+		menuItemNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
 		menuFile.add(menuItemNew);
 		
 		JMenuItem menuItemOpen = new JMenuItem("Open...");
+		menuItemOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
 		menuFile.add(menuItemOpen);
 		
 		JMenuItem menuItemSave = new JMenuItem("Save");
+		menuItemSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
 		menuFile.add(menuItemSave);
 		
 		JMenuItem menuItemSaveAs = new JMenuItem("Save As...");
@@ -85,6 +91,7 @@ public class TextEditorApp {
 		//Implement menuItem "Cut".
 		
 		JMenuItem menuItemCut = new JMenuItem("Cut");
+		menuItemCut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK));
 		menuItemCut.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -97,6 +104,7 @@ public class TextEditorApp {
 		//Implement menuItem "Copy".
 		
 		JMenuItem menuItemCopy = new JMenuItem("Copy");
+		menuItemCopy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK));
 		menuItemCopy.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -109,6 +117,7 @@ public class TextEditorApp {
 		//Implement menuItem "Paste".
 		
 		JMenuItem menuItemPaste = new JMenuItem("Paste");
+		menuItemPaste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK));
 		menuItemPaste.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -121,14 +130,17 @@ public class TextEditorApp {
 		menuEdit.add(new JSeparator());
 		
 		JMenuItem menuItemFind = new JMenuItem("Find...");
+		menuItemFind.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK));
 		menuEdit.add(menuItemFind);
 		
 		JMenuItem menuItemReplace = new JMenuItem("Replace...");
+		menuItemReplace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_MASK));
 		menuEdit.add(menuItemReplace);
 		
 		menuEdit.add(new JSeparator());
 		
 		JMenuItem menuItemSelectAll = new JMenuItem("Select All");
+		menuItemSelectAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK));
 		menuEdit.add(menuItemSelectAll);
 		
 		JMenu menuFormat = new JMenu("Format");
