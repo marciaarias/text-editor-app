@@ -19,15 +19,16 @@ import java.awt.event.InputEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.EventQueue;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.Formatter;
 
-import javax.swing.JLabel;
+import java.util.Formatter;
+import java.awt.Toolkit;
 
 public class TextEditorApp {
 
@@ -45,6 +46,7 @@ public class TextEditorApp {
 				try {
 					TextEditorApp window = new TextEditorApp();
 					window.frmTextEditor.setVisible(true);
+					window.textArea.requestFocus();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -65,6 +67,7 @@ public class TextEditorApp {
 	@SuppressWarnings("deprecation")
 	private void initialize() {
 		frmTextEditor = new JFrame();
+		frmTextEditor.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\arias\\eclipse-workspace\\text-editor-app\\resources\\text-editor.png"));
 		
 		//Implement windowClosing event.
 		
@@ -84,7 +87,7 @@ public class TextEditorApp {
 		frmTextEditor.getContentPane().setLayout(null);
 		
 		JMenuBar menuBar = new JMenuBar();
-		menuBar.setBounds(0, 0, 514, 22);
+		menuBar.setBounds(3, 0, 500, 22);
 		frmTextEditor.getContentPane().add(menuBar);
 		
 		JMenu menuFile = new JMenu("File");
@@ -314,13 +317,16 @@ public class TextEditorApp {
 		
 		menuEdit.add(new JSeparator());
 		
-		JMenuItem menuItemFind = new JMenuItem("Find...");
-		menuItemFind.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK));
-		menuEdit.add(menuItemFind);
-		
-		menuEdit.add(new JSeparator());
+		//Implement menuItem "Select All".
 		
 		JMenuItem menuItemSelectAll = new JMenuItem("Select All");
+		menuItemSelectAll.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				textArea.selectAll();
+				
+			}
+		});
 		menuItemSelectAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK));
 		menuEdit.add(menuItemSelectAll);
 		
@@ -342,9 +348,6 @@ public class TextEditorApp {
 			}
 		});
 		menuFormat.add(chckbxMenuItemWordWrap);
-		
-		JMenuItem menuItemFont = new JMenuItem("Font...");
-		menuFormat.add(menuItemFont);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(3, 23, 498, 617);
